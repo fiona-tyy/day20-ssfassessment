@@ -31,7 +31,6 @@ public class RedisConfig {
 
     
     
-    @Bean("polar")
     @Scope("singleton")
     public RedisTemplate<String, String> redisTemplate(){
         final RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
@@ -57,5 +56,5 @@ public class RedisConfig {
         r.setValueSerializer(new StringRedisSerializer());
         return r;
     }
-    
+
 }

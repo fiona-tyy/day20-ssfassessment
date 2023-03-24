@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -41,14 +42,10 @@ public class AuthenticationService {
 		
 		RestTemplate template = new RestTemplate();
 		ResponseEntity<String> resp = template.exchange(req, String.class);
-		String payload = resp.getBody();
-		if(payload.contains("Authenticated")){
-			return;
-		} else {
-
-		}
-	
-
+		
+		if(!resp.getStatusCode().equals(HttpStatus.CREATED)){
+			throw new Exception(resp.getBody());
+		} 
 
 	}
 
@@ -120,6 +117,7 @@ public class AuthenticationService {
 				break;
 			default:
 		}
+		System.out.println(">>captcha correct answer: " + total);
 
 		if(!total.equals(answer)){
 			error = new FieldError("user", "captcha", "Wrong captcha");

@@ -23,18 +23,25 @@ public class FrontController {
 	private AuthenticationService aSvc;
 	// TODO: Task 2, Task 3, Task 4, Task 6
 
-	private String captcha;
+	private String captcha = null;
 
 	@GetMapping(path="/")
 	public String showLanding(HttpSession session, Model model){
 		User user = (User) session.getAttribute("user");
 		if(null == user){
-			session.setAttribute("user", new User());
-		}
-		captcha = aSvc.generateCaptcha();
-		System.out.println(">>>captcha" + captcha);
+			user = new User();
+			session.setAttribute("user", user);
+
 		model.addAttribute("user", new User());
-		model.addAttribute("captcha", captcha);
+		}
+		System.out.println(">>>Login attempts " + user.getLoginAttempts());
+		if (user.getLoginAttempts() > 0){
+			captcha = aSvc.generateCaptcha();
+
+			model.addAttribute("captcha", captcha);
+		}
+		model.addAttribute("user", user);
+		session.setAttribute("user", user);
 
 		return "view0";
 	}
@@ -47,28 +54,70 @@ public class FrontController {
 			return "view0";
 		}
 
+		User u = (User) session.getAttribute("user");
+		u.setUsername(user.getUsername());
+		u.setPassword(user.getPassword());
+		u.setCaptchaAnswer(user.getCaptchaAnswer());
+		System.out.println(u);
 		// if user disabled, display view 2
-		if(user.isDisabled()){
-			model.addAttribute("user", user);
+		if(aSvc.isLocked(u.getUsername())){
+			model.addAttribute("user", u);
 			return "view2";
 		} 
+		try {
+			aSvc.authenticate(u.getUsername(), u.getPassword());
 
-		List<ObjectError> errors = aSvc.validateCaptcha(captcha, user.getCaptchaAnswer());
-		if(!errors.isEmpty()){
-			for(ObjectError e: errors){
-				bindings.addError(e);
+		} catch (Exception e) {
+			System.out.println(">>>> exceptionthrowns");
+			// TODO: getmessage
+			System.out.println(">before "+ u.getLoginAttempts());
+			u.setLoginAttempts(u.getLoginAttempts() + 1);
+			System.out.println(">> After " + u.getLoginAttempts());
+			session.setAttribute("user", u);
+			if (u.getLoginAttempts() >=3){
+				// System.out.println(u.getUsername());
+				aSvc.disableUser(u.getUsername());
+				return "view2";
+			} else {
+				return "redirect:/";
 			}
-			user.setLoginAttempts(user.getLoginAttempts()+1);
-			return "view0";
 		}
 
-
-		aSvc.authenticate(user.getUsername(), user.getPassword());
+			//validate captcha
+		if (u.getLoginAttempts()>0){
 		
+			List<ObjectError> errors = aSvc.validateCaptcha(captcha, u.getCaptchaAnswer());
+			if(!errors.isEmpty()){
+				for(ObjectError e: errors){
+					bindings.addError(e);
+				}
+				u.setLoginAttempts(u.getLoginAttempts()+1);
 
-		System.out.println(user);
+				if (u.getLoginAttempts() >=3){
+					// System.out.println(u.getUsername());
+					aSvc.disableUser(u.getUsername());
+					return "view2";
+				} else {
+					return "redirect:/";
+				}
+	
+			}
+		}
+		
+		return "redirect:/protected/view1.html";
 
-		//authenticate
+	
+
+	}
+
+	@GetMapping("/protected/view1.html")
+	public String accessProtected(){
 		return "view1";
+	}
+
+	@GetMapping("/protected/logout")
+	public String logout(HttpSession session){
+		session.invalidate();
+		return "redirect:/";
 	}
 }

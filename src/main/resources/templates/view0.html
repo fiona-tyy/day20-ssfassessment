@@ -56,20 +56,20 @@
             ></div>
           </td>
         </tr>
-        <tr>
+        <tr data-th-if="*{loginAttempts} >=1">
           <td>What is <span data-th-text="${captcha}"></span> ?</td>
         </tr>
-        <tr>
+        <tr data-th-if="*{loginAttempts} >=1">
           <td>
-            <label for="captcha">Answer:</label>
+            <label for="captchaAnswer">Answer:</label>
           </td>
           <td>
             <input
-              type="captcha"
-              id="captcha"
+              type="captchaAnswer"
+              id="captchaAnswer"
               size="30"
               placeholder="Please type in the answer"
-              data-th-field="${captcha}"
+              data-th-field="*{captchaAnswer}"
             />
           </td>
         </tr>

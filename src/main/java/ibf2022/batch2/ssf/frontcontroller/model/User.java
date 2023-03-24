@@ -19,8 +19,7 @@ public class User implements Serializable{
 
     private Integer captchaAnswer;
 
-    private Integer loginAttempts = 0;
-    private boolean isDisabled = false;
+    private Integer loginAttempts = 0 ;
     private boolean isAuthenticated = false;
 
     
@@ -49,22 +48,21 @@ public class User implements Serializable{
     public void setLoginAttempts(Integer loginAttempts) {
         this.loginAttempts = loginAttempts;
     }
-    public boolean isDisabled() {
-        return isDisabled;
-    }
-    public void setDisabled(boolean isDisabled) {
-        this.isDisabled = isDisabled;
-    }
+    
     public boolean isAuthenticated() {
         return isAuthenticated;
     }
     public void setAuthenticated(boolean isAuthenticated) {
         this.isAuthenticated = isAuthenticated;
     }
+    
+    
     @Override
     public String toString() {
-        return "User [username=" + username + ", password=" + password + "]";
+        return "User [username=" + username + ", password=" + password + ", captchaAnswer=" + captchaAnswer
+                + ", loginAttempts=" + loginAttempts + ", isAuthenticated=" + isAuthenticated + "]";
     }
+    
     public JsonObject toJSON(){
         return Json.createObjectBuilder()
                 .add("username", this.getUsername())
