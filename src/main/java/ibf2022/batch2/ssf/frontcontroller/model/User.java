@@ -23,7 +23,6 @@ public class User implements Serializable{
     private boolean isAuthenticated = false;
 
     
-    
     public String getUsername() {
         return username;
     }
@@ -62,7 +61,7 @@ public class User implements Serializable{
         return "User [username=" + username + ", password=" + password + ", captchaAnswer=" + captchaAnswer
                 + ", loginAttempts=" + loginAttempts + ", isAuthenticated=" + isAuthenticated + "]";
     }
-    
+
     public JsonObject toJSON(){
         return Json.createObjectBuilder()
                 .add("username", this.getUsername())

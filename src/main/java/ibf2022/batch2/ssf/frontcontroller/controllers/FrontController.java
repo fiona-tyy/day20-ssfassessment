@@ -58,6 +58,7 @@ public class FrontController {
 		u.setUsername(user.getUsername());
 		u.setPassword(user.getPassword());
 		u.setCaptchaAnswer(user.getCaptchaAnswer());
+
 		System.out.println(u);
 		// if user disabled, display view 2
 		if(aSvc.isLocked(u.getUsername())){
@@ -68,11 +69,8 @@ public class FrontController {
 			aSvc.authenticate(u.getUsername(), u.getPassword());
 
 		} catch (Exception e) {
-			System.out.println(">>>> exceptionthrowns");
 			// TODO: getmessage
-			System.out.println(">before "+ u.getLoginAttempts());
 			u.setLoginAttempts(u.getLoginAttempts() + 1);
-			System.out.println(">> After " + u.getLoginAttempts());
 			session.setAttribute("user", u);
 			if (u.getLoginAttempts() >=3){
 				// System.out.println(u.getUsername());
@@ -110,14 +108,4 @@ public class FrontController {
 
 	}
 
-	@GetMapping("/protected/view1.html")
-	public String accessProtected(){
-		return "view1";
-	}
-
-	@GetMapping("/protected/logout")
-	public String logout(HttpSession session){
-		session.invalidate();
-		return "redirect:/";
-	}
 }

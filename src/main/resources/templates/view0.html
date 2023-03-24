@@ -56,10 +56,25 @@
             ></div>
           </td>
         </tr>
+
         <tr data-th-if="*{loginAttempts} >=1">
           <td>What is <span data-th-text="${captcha}"></span> ?</td>
         </tr>
         <tr data-th-if="*{loginAttempts} >=1">
+          <td>
+            <label for="captchaAnswer">Answer:</label>
+          </td>
+          <td>
+            <input
+              type="number"
+              id="captchaAnswer"
+              size="30"
+              placeholder="Please type in your password"
+              data-th-field="*{captchaAnswer}"
+            />
+          </td>
+        </tr>
+        <!-- <tr data-th-if="*{loginAttempts} >=1">
           <td>
             <label for="captchaAnswer">Answer:</label>
           </td>
@@ -72,7 +87,7 @@
               data-th-field="*{captchaAnswer}"
             />
           </td>
-        </tr>
+        </tr> -->
         <tr>
           <td></td>
           <td>
